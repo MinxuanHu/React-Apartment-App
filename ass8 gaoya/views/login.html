@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+
+    <style>
+        .error{
+            color:red;
+        }
+        body{
+            background-color: whitesmoke;
+            font-style: normal;
+        }
+        #container { margin:auto;
+            padding: 0px 0px 20px;
+            background-color: white;
+            border:1px grey solid;
+            width: 1180px;
+            height:450px;
+        }
+        #head{
+            margin:auto;
+            width: 1400px;
+            background-color: white;
+            height: 100px;
+
+        }
+        a{
+            text-decoration: none;
+        }
+        .btn{background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 22px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            border-radius: 12px}
+        .btn {
+            background-color: white;
+            color: black;
+            border: 2px solid #4CAF50;
+        }
+        .btn:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div id="head">
+    <p style="font-size:50px;margin-left: 120px;margin-top: 0;font-style: oblique">resident service</p>
+</div>
+<br><br><br>
+<div id="container">
+    <div id="left" style="width: 30%;height: 80%;float: left;margin-left: 30px;margin-top: 50px;border-right:1px solid #4da6bb ">
+        <br>
+        <p style="font-size: 25px;font-style: oblique"><b>Welcome to Resident Services</b></p>
+    <form class="user-form" method="post">
+        <br>
+        <p style="color: #8d8d8d">email <br><input type="email" name="email"  required style="width: 300px"></p>
+        <p style="color: #8d8d8d">password <input type="password" name="password"  minlength="8" required style="width: 300px"></p>
+        <p><button class="btn" type="submit" style="color: black">submit</button></p>
+        <p>
+            <a href="/user/reg" style="color: #4da6bb">Click here to Register</a>
+        </p>
+    </form>
+    </div>
+    <div id="right" style="float: left;width: 50%;height: 80%;margin-left: 50px;margin-top: 50px">
+        <br><br><br><br><br><br>
+        <div>
+            <div id="left1" style="width: 12%;height: 100%;float: left">
+                <img src="money.png">
+            </div>
+            <div id="right1" style="width: 80%;height:100%;float: left;">
+                <p style="color: coral;font-size: 23px;margin: 0px auto"><b>Make Payments</b></p><br>
+                <p style="margin: -3px auto">Pay online, check the status of your payments and review your payment history.</p><br>
+            </div>
+        </div>
+
+        <div>
+            <div id="left2" style="width: 12%;height: 100%;float: left">
+                <img src="resources.png">
+            </div>
+            <div id="right2" style="float: left;width: 80%;height: 100%">
+                <p style="color: coral;font-size: 23px;margin: 15px auto"><b>Maintenance Request</b></p><br>
+                <p style="margin: -20px auto">Submit online maintenance requests.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+    <script>
+    $.validator.setDefaults({
+        submitHandler: function() {
+            var data = getdata($('.user-form').serializeArray());
+            $.ajax({
+                    url: 'http://localhost:3000/user/login',
+                    type: 'POST',
+                    data: data,
+                })
+                .done(function(res) {
+                    alert(res.msg)
+                    if (res.code == '200') {
+                        location.href = '/user/user'
+                    }
+                })
+        }
+    });
+    $().ready(function() {
+        $(".user-form").validate();
+    });
+
+    function getdata(data) {
+        var obj = {}
+        $.each(data, function(index, val) {
+            obj[val.name] = val.value
+        });
+        return obj
+    }
+    </script>
+</body>
+
+</html>

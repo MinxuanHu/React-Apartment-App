@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>user manage</title>
+    <script src="./javascripts/template-web.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <style>
+        .wrap{
+            min-width: 1086px;
+            overflow: hidden;
+        }
+        .left{
+            float: left;
+            width: 20%;
+        }
+        .right {
+            float: left;
+            margin-left: 5%;
+            width: 60%;
+        }
+        .right table{
+            width: 100%;
+            text-align: center;
+            line-height: 35px;
+        }
+        .error{
+            color:red;
+        }
+        body{
+            background-color: #D2B48C;
+            font-style: italic;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="left">
+            <form method="post" class="edit-form">
+                <p>email <input type="email" name="email" required></p>
+                <p>password <input type="password" name="password" minlength="8" required></p>
+                <p><button class="btn" type="submit">submit</button></p>
+            </form>
+        </div>
+        <div class="right">
+            <table>
+                <thead>
+                    <tr>
+                        <th>action</th>
+                        <th>email</th>
+                        <th>password</th>
+                    </tr>
+                </thead>
+                <tbody class="tb-wrap">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<script id="tpl" type="text/template">
+    {{each data}}
+    <tr>
+        <td>
+            <button did="{{$value._id}}" class="edit">edit</button>
+            <button did="{{$value._id}}" class="del">del</button>
+        </td>
+        <td>{{$value.email}}</td>
+        <td>{{$value.password}}</td>
+    </tr>
+    {{/each}}
+</script>
+<script id="edit" type="text/template">
+    <input type="hidden" name="id" value="{{obj._id}}">
+    <p>email <input type="email" name="email" value="{{obj.email}}" required></p>
+    <p>password <input type="password" name="password" value="{{obj.password}}" minlength="8" required></p>
+    <p><button class="btn" type="submit">submit</button></p>
+</script>
+<script>
+$('body').on('click', '.edit', function(event) {
+    var id = $(this).attr('did');
+    $.get('http://localhost:3000/user/getAll?id=' + id, function(data) {
+        var ret = template('edit', { obj: data.data[0] })
+        $('.edit-form').html(ret)
+    });
+});
+$('body').on('click', '.del', function(event) {
+    var id = $(this).attr('did');
+    if (confirm('del?')) {
+        $.ajax({
+            url:"http://localhost:3000/user/delete",
+            type:'DELETE',
+            data:{id},
+            success:function(res){
+                getuserlist()
+            }
+        });
+
+        // $.delete('http://localhost:3000/user/delete?id=' + id, function(data) {
+        //     getuserlist()
+        // });
+    }
+});
+
+$.validator.setDefaults({
+    submitHandler: function() {
+        var data = getdata($('.edit-form').serializeArray());
+        $.ajax({
+                url: 'http://localhost:3000/user/edit',
+                type: 'POST',
+                data: data,
+            })
+            .done(function(res) {
+                getuserlist()
+                // $('.edit-form')[0].reset();
+                location.reload();
+            })
+    }
+});
+$().ready(function() {
+    $(".edit-form").validate();
+});
+
+function getdata(data) {
+    var obj = {}
+    $.each(data, function(index, val) {
+        obj[val.name] = val.value
+    });
+    return obj
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+getuserlist()
+
+function getuserlist(argument) {
+    $.get('http://localhost:3000/user/getAll', function(data) {
+        console.log("data -->", data);
+
+        var ret = template('tpl', data)
+        $('.tb-wrap').html(ret)
+    });
+
+
+}
+</script>
+
+</html>
